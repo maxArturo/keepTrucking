@@ -1,0 +1,76 @@
+{
+    "nodes": [{
+        "Title": "Star Wars: Episode IV - A New Hope",
+        "year": "1977",
+        "Type": "movie"
+    }, {
+        "Title": "Gangs of New York",
+        "year": "2002",
+        "Type": "movie"
+    }, {
+        "Title": "The Twilight Saga: New Moon",
+        "year": "2009",
+        "Type": "movie"
+    }, {
+        "Title": "Home Alone 2: Lost in New York",
+        "year": "1992",
+        "Type": "movie"
+    }, {
+        "Title": "New Girl",
+        "year": "2011–",
+        "Type": "series"
+    }, {
+        "Title": "Orange Is the New Black",
+        "year": "2013–",
+        "Type": "series"
+    }, {
+        "Title": "The Emperor's New Groove",
+        "year": "2000",
+        "Type": "movie"
+    }, {
+        "Title": "Escape from New York",
+        "year": "1981",
+        "Type": "movie"
+    }, {
+        "Title": "The New World",
+        "year": "2005",
+        "Type": "movie"
+    }, {
+        "Title": "Bad Lieutenant: Port of Call New Orleans",
+        "year": "2009",
+        "Type": "movie"
+    }],
+    "links": [{
+        "source": 1,
+        "target": 0,
+        "value": 1
+    }, {
+        "source": 2,
+        "target": 0,
+        "value": 8
+    }, {
+        "source": 3,
+        "target": 0,
+        "value": 10
+    }, {
+        "source": 3,
+        "target": 2,
+        "value": 6
+    }, {
+        "source": 4,
+        "target": 0,
+        "value": 1
+    }, {
+        "source": 5,
+        "target": 0,
+        "value": 1
+    }, {
+        "source": 6,
+        "target": 0,
+        "value": 1
+    }, {
+        "source": 7,
+        "target": 0,
+        "value": 1
+    }, ]
+}
