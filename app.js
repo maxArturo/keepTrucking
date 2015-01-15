@@ -3,6 +3,7 @@
 var width = 900, 
   height = 500;
 
+var result;
 
 var svg = d3.select("body").append("svg")
   .attr("width", width)
@@ -11,26 +12,27 @@ var svg = d3.select("body").append("svg")
 var color = d3.scale.category20b();
 
 var force = d3.layout.force()
-    .charge(-120)
-    .linkDistance(30)
+    .charge(-180)
+    .linkDistance(function(d){return d.value;})
     .size([width, height]);
 
 //first iteration
-d3.json("graph.json",function(error, json){
-  
+d3.json("http://omdbapi.com/?s=computer",function(error, json){
+  nodes = coerce(json.Search);
+  links = generateLinks($.extend(true, [], nodes));
 
-  force.nodes(data.nodes)
-  .links(data.links)
+  force.nodes(nodes)
+  .links(links)
   force.start();
 
   var link = svg.selectAll(".link")
-    .data(data.links)
+    .data(links)
     .enter().append("line")
     .attr("class", "link")
     .style("stroke-width", function(d){return Math.sqrt(yearDistance(d)); });
 
   var gnodes = svg.selectAll("g.gnode")
-    .data(data.nodes).enter()
+    .data(nodes).enter()
     .append("g")
     .attr("class", "gnode");
 
@@ -43,10 +45,11 @@ d3.json("graph.json",function(error, json){
   gnodes.append("text")
     .attr("x", 14)
     .attr("y", ".31em")
-    .text(function(d){return d.Title;});
+    .text(function(d){return "(" + d.year + ") " + d.Title;});
 
   force.on("tick", function() {
-    link.attr("x1", function(d) { return d.source.x; })
+    link.attr("x1", function(d) { 
+      return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
@@ -58,14 +61,14 @@ d3.json("graph.json",function(error, json){
 });
 
 //format into node-link relationship
-function coerce (movieData) {
-
-  movieData.Search.forEach(function(d){
-    d.year = +d.Year;
-    delete d['Year'];
-    delete d['imdbID'];
-  });
-  return movieData.Search;
+function coerce(nodes) {
+  for (var i = nodes.length - 1; i >= 0; i--) {
+    nodes[i].year = +nodes[i].Year;
+    delete nodes[i]['Year'];
+    delete nodes[i]['imdbID'];
+    nodes[i].id = i;
+  };
+  return nodes;
 }
 
 //potential for separating nodes by year - nodes closer together
@@ -74,98 +77,23 @@ function coerce (movieData) {
 
 function yearDistance(link){
   // return (link.source.year - link.target.year) * 2;
-  return link.value * 2;
+  return link.value;
 }
 
-function generateLinks(movieData){
-  generatedLinks = [];
-  movieData.forEach(function(d){
-    otherNodes = movieData.filter(function(g){
-      return g.Title != d.Title;
-    });
-    otherNodes.forEach(function(g){
-      generatedLinks.push({
-        "source": d,
-        "target": g,
+function generateLinks(nodes){
+  if (nodes.length === 1) {
+    return [];
+  } else {
+    var links = [], tempNodes = nodes;
+    mainNode = tempNodes.shift();
+    nodes.forEach(function(d){
+      links.push({
+        "source": mainNode.id,
+        "target": d.id,
+        "value" : Math.abs(mainNode.year - d.year) * 5
       });  
-    })
-  });
-  return generatedLinks;
+    });
+    // return links.concat(generateLinks(tempNodes));
+    return links;
+  };
 }
-
-var data = {
-    "nodes": [{
-        "Title": "Star Wars: Episode IV - A New Hope",
-        "year": "1977",
-        "Type": "movie"
-    }, {
-        "Title": "Gangs of New York",
-        "year": "2002",
-        "Type": "movie"
-    }, {
-        "Title": "The Twilight Saga: New Moon",
-        "year": "2009",
-        "Type": "movie"
-    }, {
-        "Title": "Home Alone 2: Lost in New York",
-        "year": "1992",
-        "Type": "movie"
-    }, {
-        "Title": "New Girl",
-        "year": "2011–",
-        "Type": "series"
-    }, {
-        "Title": "Orange Is the New Black",
-        "year": "2013–",
-        "Type": "series"
-    }, {
-        "Title": "The Emperor's New Groove",
-        "year": "2000",
-        "Type": "movie"
-    }, {
-        "Title": "Escape from New York",
-        "year": "1981",
-        "Type": "movie"
-    }, {
-        "Title": "The New World",
-        "year": "2005",
-        "Type": "movie"
-    }, {
-        "Title": "Bad Lieutenant: Port of Call New Orleans",
-        "year": "2009",
-        "Type": "movie"
-    }],
-    "links": [{
-        "source": 1,
-        "target": 0,
-        "value": 1
-    }, {
-        "source": 2,
-        "target": 0,
-        "value": 8
-    }, {
-        "source": 3,
-        "target": 0,
-        "value": 10
-    }, {
-        "source": 3,
-        "target": 2,
-        "value": 6
-    }, {
-        "source": 4,
-        "target": 0,
-        "value": 1
-    }, {
-        "source": 5,
-        "target": 0,
-        "value": 1
-    }, {
-        "source": 6,
-        "target": 0,
-        "value": 1
-    }, {
-        "source": 7,
-        "target": 0,
-        "value": 1
-    }, ]
-};
