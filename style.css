@@ -7,3 +7,8 @@
   stroke: #999;
   stroke-opacity: .6;
 }
+
+.gnode text{
+  font-family: helvetica, verdana, sans-serif;
+  font-size: 10px;
+}
